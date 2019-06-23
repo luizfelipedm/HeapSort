@@ -1,62 +1,83 @@
-#define PAI(i) ((i-1)/2)		            //Pai de i er i-1 divido por 2
-#define F_ESQ(i) (2*i+1)                    //Filho esquerdo de i
-#define F_DIR(i) (2*i+2)                    //Filho direito de i
+#include <stdio.h>
+#include <stdlib.h>
 
-
-void troca(int *x, int *y)
+#define PAI(i) ((i-1)/2)
+void max_heapify(int *vet, int i, int f)
 {
-    int z = *x;
-    *x = *y;
-    *y = z;
-}
-
-int irmao(int index, int n)
-{
-    if(index != n)
+    int aux = vet[i];
+    int j = (i * 2) + 1;
+    while( j <= f )
     {
-        if(index % 2 != 0)
-            index = index+1;
-    }else 
-        if (index % 2 == 0)
+        if( j < f )
         {
-            index = index-1;
-        }
-
-    return index; 
-}
-
-void inserir_chave(int *arr,int index, int chave)
-{
-    int n;
-    if(index == 0)
-    {
-        arr[index] = chave;
-    }
-    while(index > 0)
-    {
-        if( arr[index] >= arr[irmao(index,n)] )
-        {
-            if( arr[index] > arr[PAI(index)] )
+            if( vet[j] < vet[j + 1] )
             {
-                troca( &arr[index] , &arr[PAI(index)] );
-                index = PAI(index);
-            } 
-        }else 
-            if (arr[irmao(index,n)] > arr[PAI(index)])
-            {
-                troca( &arr[irmao(index,n)], &arr[PAI(index)] );
-                index = PAI(index);
+                j = j + 1;
             }
-                
+        }
+        if( aux < vet[j])
+        {
+            vet[i] = vet[j];
+            i = j;
+            j = (2 * i) + 1;
+        }else
+            j = f + 1;
+    }
+    vet[i] = aux;
+}
+
+void heapSort(int *vet, int n)
+{
+    int i, aux;
+    for( i = (n-1)/2; i >= 0; i--)
+    {
+        max_heapify(vet, i, n-1);
+    }
+    for( i = n-1; i >= 1; i-- )
+    {
+        aux = vet[0];
+        vet[0] = vet[i];
+        vet[i] = aux;
+        max_heapify(vet, 0, i-1);
     }
 }
 
-
-void heap_sort(int *arr)
+void inserir_chave(int *vet,int index, int chave, int *n)
 {
-    int n;
-    troca( &arr[n], &arr[0]);
-    n--;
+    vet[*n] = chave;
+    (*n)++;
+    max_heapify(vet,index,*n);
+    heapSort(vet,*n);
+}
+
+int main()
+{
+    int n = 0;
+    int num = 0;
+    int tam;
+    printf("Digite tamanho vetor: ");
+    scanf("%d",&tam);
+    int *vet = malloc((tam) * sizeof(int));
 
 
+    for(int i=0; i < tam; i++)
+    {
+        printf("Digite um num: ");
+        scanf("%d",&num);
+        inserir_chave(vet,i,num,&n);
+    }
+
+    printf("\n\nDepois: \n");
+
+
+    for(int i=0; i < n; i++)
+    {
+        (i > 0) ? 
+         printf("P[%d] index[%d]: (%d) \n", PAI(i),i,vet[i])
+        :printf("      Raiz[%d]: (%d) \n", i,vet[i]);
+        
+    }
+
+    free(vet);
+    return 0;
 }
