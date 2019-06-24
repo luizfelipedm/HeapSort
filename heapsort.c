@@ -57,7 +57,7 @@ int main()
     int tam;
     printf("Digite tamanho vetor: ");
     scanf("%d",&tam);
-    int *vet = malloc((tam) * sizeof(int));
+    int *vet = (int*) malloc((tam) * sizeof(int));
 
 
     for(int i=0; i < tam; i++)
